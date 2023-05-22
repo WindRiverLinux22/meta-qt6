@@ -42,9 +42,16 @@ create_qt6_sdk_files () {
     echo 'SysrootifyPrefix = true' >> $qtconf
 
     # add qt.conf to both bin and libexec dirs
-    cp ${WORKDIR}/qt.conf ${SDK_OUTPUT}${NATIVE_SYSROOT}${QT6_INSTALL_BINDIR}/
-    cp ${WORKDIR}/qt.conf ${SDK_OUTPUT}${NATIVE_SYSROOT}${QT6_INSTALL_HOST_LIBEXECDIR}/
-    cp ${WORKDIR}/qt.conf ${SDK_OUTPUT}${NATIVE_SYSROOT}${QT6_INSTALL_BINDIR}/target_qt.conf
+    sdk_qt6_install_bindir="${SDK_OUTPUT}${NATIVE_SYSROOT}${QT6_INSTALL_BINDIR}"
+    sdk_qt6_install_host_libexecdir="${SDK_OUTPUT}${NATIVE_SYSROOT}${QT6_INSTALL_HOST_LIBEXECDIR}"
+    for i in $sdk_qt6_install_bindir $sdk_qt6_install_host_libexecdir; do
+        if [ ! -e $i ]; then
+            mkdir -p $i
+        fi
+    done
+    cp ${WORKDIR}/qt.conf $sdk_qt6_install_bindir/
+    cp ${WORKDIR}/qt.conf $sdk_qt6_install_host_libexecdir/
+    cp ${WORKDIR}/qt.conf $sdk_qt6_install_bindir/target_qt.conf
 
     install -d ${SDK_OUTPUT}${NATIVE_SYSROOT}/environment-setup.d
     script=${SDK_OUTPUT}${NATIVE_SYSROOT}/environment-setup.d/qt6.sh
